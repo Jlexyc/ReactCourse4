@@ -1,0 +1,8 @@
+.DashboardContainer {
+  margin: 20px;
+}
+
+.ContentContainer {
+  display: flex;
+  flex-direction: row;
+}
