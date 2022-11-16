@@ -1,6 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Card, CardActions, CardContent, Button, Typography } from '@mui/material';
+import {
+  Card, CardActions, CardContent, Button, Typography,
+} from '@mui/material';
 
 const styles = {
   cardContainer: {
@@ -15,10 +17,18 @@ const styles = {
     fontSize: 14,
   },
   descriptionText: {
-    mb: 1.5
-  }
-}
-export const Item = ({ item }) => {
+    mb: 1.5,
+  },
+};
+export const Item = ({ item, onRemove, onEdit }) => {
+  const onRemoveClicked = React.useCallback(() => {
+    onRemove(item.id);
+  });
+
+  const onEditClicked = React.useCallback(() => {
+    onEdit(item.id);
+  });
+
   return (
     <Card sx={styles.cardContainer}>
       <CardContent>
@@ -36,11 +46,12 @@ export const Item = ({ item }) => {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Edit</Button>
+        <Button size="small" onClick={onEditClicked}>Edit</Button>
+        <Button size="small" onClick={onRemoveClicked}>Remove</Button>
       </CardActions>
     </Card>
-  )
-}
+  );
+};
 
 Item.propTypes = {
   item: PropTypes.shape({
@@ -49,5 +60,7 @@ Item.propTypes = {
     price: PropTypes.number.isRequired,
     category: PropTypes.string.isRequired,
     description: PropTypes.string,
-  })
-}
+  }),
+  onRemove: PropTypes.func.isRequired,
+  onEdit: PropTypes.func.isRequired,
+};
