@@ -20,3 +20,17 @@ Each task must have:
 
 - Rebuild your Homework 1 with Redux
 - Add and setup eslint to your project
+
+# Homework #3 (Thunk + Fetch)
+
+Create a React App that will be fetching and updating data remotely on the BE.
+
+You need to implement:
+- List of goods
+- Filter goods by the string (locally)
+- Sort goods by the field asc/desc (locally)
+- Update item
+- Remove Item
+- Add Item
+
+Use BE app from https://github.com/Jlexyc/bff-react to run service locally
