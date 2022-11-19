@@ -15,3 +15,8 @@ Each task must have:
 4. status
 5. creation date
 6. update date
+
+# Homework #2 (Redux)
+
+- Rebuild your Homework 1 with Redux
+- Add and setup eslint to your project
