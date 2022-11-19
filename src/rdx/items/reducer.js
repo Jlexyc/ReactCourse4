@@ -42,7 +42,6 @@ const initialState = {
 };
 
 export const reducer = (state = initialState, action) => {
-  console.log('action: ', action);
   switch (action.type) {
     case ADD_ITEM:
       return {

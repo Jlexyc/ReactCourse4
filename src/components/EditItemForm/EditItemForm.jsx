@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { TextField, Button } from '@mui/material';
-import { addItem, editItem } from '../../rdx/items/actions';
+import { TextField, Button, CircularProgress } from '@mui/material';
+import { addGoodsThunk } from '../../rdx/goods/thunks';
+import { selectIsAddGoodsLoading } from '../../rdx/goods/selectors';
 import { selectAllItems } from '../../rdx/items/selectors';
 
 import './EditItemForm.css';
@@ -16,13 +17,15 @@ const styles = {
 const initialItem = {
   title: '',
   description: '',
-  price: 0,
+  weight: '',
   category: '',
 };
 
 export const EditItemForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const isLoading = useSelector(selectIsAddGoodsLoading);
 
   const { id } = useParams();
 
@@ -55,9 +58,10 @@ export const EditItemForm = () => {
 
   const onSave = React.useCallback(() => {
     if (id) {
-      dispatch(editItem(item));
+      // dispatch(editItem(item));
     } else {
-      dispatch(addItem(item));
+      console.log('item: ', item);
+      dispatch(addGoodsThunk(item));
       setItem(initialItem);
     }
   }, [item, dispatch]);
@@ -83,13 +87,13 @@ export const EditItemForm = () => {
         value={item.description}
       />
       <TextField
-        name="price"
+        name="weight"
         id="filled-basic"
-        label="Price"
+        label="Weight"
         variant="filled"
         sx={styles.textfield}
         onChange={onChangeText}
-        value={item.price}
+        value={item.weight}
       />
       <TextField
         name="category"
@@ -101,7 +105,9 @@ export const EditItemForm = () => {
         value={item.category}
       />
       <div className="ButtonsFooter">
-        <Button size="small" onClick={onSave}>{id ? 'Save' : 'Add'}</Button>
+        {isLoading
+          ? <CircularProgress />
+          : <Button size="small" onClick={onSave}>{id ? 'Save' : 'Add'}</Button>}
         <Button size="small" onClick={onClose}>Close</Button>
       </div>
     </div>

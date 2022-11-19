@@ -1,17 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
-  Card, CardActions, CardContent, Button, Typography,
+  Card, CardActions, CardContent, Button, Typography, CircularProgress,
 } from '@mui/material';
 
 const styles = {
   cardContainer: {
     width: 250,
-    height: 300,
+    height: 220,
     m: '10px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+  },
+  cardContainerCenter: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   categoryText: {
     fontSize: 14,
@@ -20,7 +24,14 @@ const styles = {
     mb: 1.5,
   },
 };
-export const Item = ({ item, onRemove, onEdit }) => {
+export const Item = (
+  {
+    item,
+    onRemove,
+    onEdit,
+    loading,
+  },
+) => {
   const onRemoveClicked = React.useCallback(() => {
     onRemove(item.id);
   });
@@ -29,6 +40,13 @@ export const Item = ({ item, onRemove, onEdit }) => {
     onEdit(item.id);
   });
 
+  if (loading) {
+    return (
+      <Card sx={[styles.cardContainer, styles.center]}>
+        <CircularProgress />
+      </Card>
+    );
+  }
   return (
     <Card sx={styles.cardContainer}>
       <CardContent>
@@ -42,7 +60,7 @@ export const Item = ({ item, onRemove, onEdit }) => {
           {item.description}
         </Typography>
         <Typography variant="body2">
-          {item.price}
+          {item.weight}
         </Typography>
       </CardContent>
       <CardActions>
@@ -57,10 +75,11 @@ Item.propTypes = {
   item: PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
+    weight: PropTypes.string.isRequired,
     category: PropTypes.string.isRequired,
     description: PropTypes.string,
   }),
   onRemove: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
 };

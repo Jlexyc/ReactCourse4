@@ -1,12 +1,22 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Fab } from '@mui/material';
+import {
+  Fab,
+  CircularProgress,
+  Typography,
+  Button,
+} from '@mui/material';
 import { Add as AddIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import { selectAllItems } from '../../rdx/items/selectors';
+import { fetchAllGoodsThunk } from '../../rdx/goods/thunks';
+import {
+  selectAllGoods,
+  selectIsAllGoodsLoading,
+  selectAllGoodsError,
+  selectIsAddGoodsLoading,
+} from '../../rdx/goods/selectors';
 import { logoutUser } from '../../rdx/user/actions';
-import { removeItem } from '../../rdx/items/actions';
 import { ItemsList } from '../ItemsList/ItemsList';
 
 import './Dashboard.css';
@@ -25,9 +35,21 @@ const styles = {
 const logoutButtonStyles = [styles.fabButton, styles.logoutButton];
 
 export const Dashboard = () => {
-  const items = useSelector(selectAllItems);
+  const items = useSelector(selectAllGoods);
+  const isLoading = useSelector(selectIsAllGoodsLoading);
+  const isAddLoading = useSelector(selectIsAddGoodsLoading);
+  const error = useSelector(selectAllGoodsError);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const fetchAllGoodsThunkCallback = React.useCallback(() => {
+    dispatch(fetchAllGoodsThunk());
+  }, [dispatch]);
+
+  React.useEffect(() => {
+    fetchAllGoodsThunkCallback();
+  }, []);
 
   const onEditClicked = React.useCallback(() => {
     navigate('/addItem');
@@ -37,8 +59,8 @@ export const Dashboard = () => {
     dispatch(logoutUser());
   }, [dispatch]);
 
-  const onItemRemoveClicked = React.useCallback((itemId) => {
-    dispatch(removeItem(itemId));
+  const onItemRemoveClicked = React.useCallback(() => {
+
   }, [dispatch]);
 
   const onEditItemClicked = React.useCallback((itemId) => {
@@ -48,7 +70,23 @@ export const Dashboard = () => {
   return (
     <div className="DashboardContainer">
       <div className="ContentContainer">
-        <ItemsList items={items} onRemove={onItemRemoveClicked} onEdit={onEditItemClicked} />
+        {isLoading && <CircularProgress />}
+        {(!error && !isLoading)
+          ? (
+            <ItemsList
+              items={items}
+              onRemove={onItemRemoveClicked}
+              onEdit={onEditItemClicked}
+              isItemCreating={isAddLoading}
+            />
+          )
+          : null}
+        {error && (
+          <div>
+            <Typography variant="body2">{error.message}</Typography>
+            <Button size="small" onClick={fetchAllGoodsThunkCallback}>Retry</Button>
+          </div>
+        )}
         <Outlet />
       </div>
       <Fab color="primary" aria-label="add" sx={styles.fabButton} onClick={onEditClicked}>

@@ -6,11 +6,18 @@ import { Item } from '../Item/Item';
 
 import './ItemsList.css';
 
-export const ItemsList = ({ items, onRemove, onEdit }) => {
-  if (!items?.length) {
+export const ItemsList = (
+  {
+    items,
+    onRemove,
+    onEdit,
+    isItemCreating,
+  },
+) => {
+  if (!items?.length && !isItemCreating) {
     return (
       <div>
-        <Typography variant="h5" component="div">
+        <Typography variant="h5">
           No items to display
         </Typography>
       </div>
@@ -19,6 +26,7 @@ export const ItemsList = ({ items, onRemove, onEdit }) => {
   return (
     <div className="ListContainer">
       {items.map((item) => <Item key={item.id} item={item} onRemove={onRemove} onEdit={onEdit} />)}
+      {isItemCreating && <Item loading />}
     </div>
   );
 };
@@ -27,10 +35,11 @@ ItemsList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
+    weight: PropTypes.string.isRequired,
     category: PropTypes.string.isRequired,
     description: PropTypes.string,
   })),
   onRemove: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
+  isItemCreating: PropTypes.bool,
 };
