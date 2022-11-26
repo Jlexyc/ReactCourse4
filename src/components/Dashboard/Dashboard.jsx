@@ -9,12 +9,14 @@ import {
 import { Add as AddIcon, Logout as LogoutIcon } from '@mui/icons-material';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import { fetchAllGoodsThunk } from '../../rdx/goods/thunks';
+import { fetchAllGoodsThunk, removeGoodsThunk } from '../../rdx/goods/thunks';
 import {
   selectAllGoods,
   selectIsAllGoodsLoading,
   selectAllGoodsError,
   selectIsAddGoodsLoading,
+  selectIsRemoveGoodsLoading,
+  selectIsModifyGoodsLoading,
 } from '../../rdx/goods/selectors';
 import { logoutUser } from '../../rdx/user/actions';
 import { ItemsList } from '../ItemsList/ItemsList';
@@ -38,6 +40,8 @@ export const Dashboard = () => {
   const items = useSelector(selectAllGoods);
   const isLoading = useSelector(selectIsAllGoodsLoading);
   const isAddLoading = useSelector(selectIsAddGoodsLoading);
+  const isRemoveGoodsLoading = useSelector(selectIsRemoveGoodsLoading);
+  const isModifyGoodsLoading = useSelector(selectIsModifyGoodsLoading);
   const error = useSelector(selectAllGoodsError);
 
   const navigate = useNavigate();
@@ -59,8 +63,8 @@ export const Dashboard = () => {
     dispatch(logoutUser());
   }, [dispatch]);
 
-  const onItemRemoveClicked = React.useCallback(() => {
-
+  const onItemRemoveClicked = React.useCallback((id) => {
+    dispatch(removeGoodsThunk(id));
   }, [dispatch]);
 
   const onEditItemClicked = React.useCallback((itemId) => {
@@ -70,7 +74,7 @@ export const Dashboard = () => {
   return (
     <div className="DashboardContainer">
       <div className="ContentContainer">
-        {isLoading && <CircularProgress />}
+        {isLoading && <div className="LoadingContainer"><CircularProgress /></div>}
         {(!error && !isLoading)
           ? (
             <ItemsList
@@ -78,6 +82,8 @@ export const Dashboard = () => {
               onRemove={onItemRemoveClicked}
               onEdit={onEditItemClicked}
               isItemCreating={isAddLoading}
+              isRemoveGoodsLoading={isRemoveGoodsLoading}
+              isModifyGoodsLoading={isModifyGoodsLoading}
             />
           )
           : null}

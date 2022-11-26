@@ -29,7 +29,8 @@ export const Item = (
     item,
     onRemove,
     onEdit,
-    loading,
+    isLoadingCell,
+    isLoading,
   },
 ) => {
   const onRemoveClicked = React.useCallback(() => {
@@ -40,9 +41,9 @@ export const Item = (
     onEdit(item.id);
   });
 
-  if (loading) {
+  if (isLoadingCell || isLoading) {
     return (
-      <Card sx={[styles.cardContainer, styles.center]}>
+      <Card sx={[styles.cardContainer, styles.cardContainerCenter]}>
         <CircularProgress />
       </Card>
     );
@@ -81,5 +82,6 @@ Item.propTypes = {
   }),
   onRemove: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
-  loading: PropTypes.bool,
+  isLoadingCell: PropTypes.bool,
+  isLoading: PropTypes.bool,
 };

@@ -2,9 +2,8 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TextField, Button, CircularProgress } from '@mui/material';
-import { addGoodsThunk } from '../../rdx/goods/thunks';
-import { selectIsAddGoodsLoading } from '../../rdx/goods/selectors';
-import { selectAllItems } from '../../rdx/items/selectors';
+import { addGoodsThunk, putGoodsThunk } from '../../rdx/goods/thunks';
+import { selectIsAddGoodsLoading, selectAllGoods, selectIsAllGoodsLoading } from '../../rdx/goods/selectors';
 
 import './EditItemForm.css';
 
@@ -26,15 +25,16 @@ export const EditItemForm = () => {
   const dispatch = useDispatch();
 
   const isLoading = useSelector(selectIsAddGoodsLoading);
+  const isItemsLoading = useSelector(selectIsAllGoodsLoading);
 
   const { id } = useParams();
 
-  const items = useSelector(selectAllItems);
+  const items = useSelector(selectAllGoods);
   const [item, setItem] = React.useState(initialItem);
 
   React.useEffect(() => {
     let itemToEdit;
-    if (id) {
+    if (id && !isItemsLoading) {
       itemToEdit = items.find((i) => i.id === id);
       if (!itemToEdit) {
         navigate('/');
@@ -43,7 +43,7 @@ export const EditItemForm = () => {
       itemToEdit = initialItem;
     }
     setItem(itemToEdit);
-  }, [items, id]);
+  }, [items, id, isItemsLoading]);
 
   const onClose = React.useCallback(() => {
     navigate('/');
@@ -58,13 +58,20 @@ export const EditItemForm = () => {
 
   const onSave = React.useCallback(() => {
     if (id) {
-      // dispatch(editItem(item));
+      dispatch(putGoodsThunk(item));
     } else {
-      console.log('item: ', item);
       dispatch(addGoodsThunk(item));
       setItem(initialItem);
     }
   }, [item, dispatch]);
+
+  if (isItemsLoading) {
+    return (
+      <div className="FormContainer Center">
+        <CircularProgress />
+      </div>
+    );
+  }
 
   return (
     <div className="FormContainer">

@@ -12,6 +12,8 @@ export const ItemsList = (
     onRemove,
     onEdit,
     isItemCreating,
+    isRemoveGoodsLoading,
+    isModifyGoodsLoading,
   },
 ) => {
   if (!items?.length && !isItemCreating) {
@@ -25,8 +27,16 @@ export const ItemsList = (
   }
   return (
     <div className="ListContainer">
-      {items.map((item) => <Item key={item.id} item={item} onRemove={onRemove} onEdit={onEdit} />)}
-      {isItemCreating && <Item loading />}
+      {items.map((item) => (
+        <Item
+          key={item.id}
+          item={item}
+          onRemove={onRemove}
+          onEdit={onEdit}
+          isLoading={isRemoveGoodsLoading[item.id] || isModifyGoodsLoading[item.id]}
+        />
+      ))}
+      {isItemCreating && <Item isLoadingCell />}
     </div>
   );
 };
@@ -42,4 +52,6 @@ ItemsList.propTypes = {
   onRemove: PropTypes.func.isRequired,
   onEdit: PropTypes.func.isRequired,
   isItemCreating: PropTypes.bool,
+  isRemoveGoodsLoading: PropTypes.objectOf(PropTypes.bool),
+  isModifyGoodsLoading: PropTypes.objectOf(PropTypes.bool),
 };
