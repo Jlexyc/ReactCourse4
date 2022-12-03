@@ -31,19 +31,33 @@ class EditItemForm extends React.Component {
     };
   }
 
-  // componentDidUpdate() {
-  //   const { isItemsLoading, navigate, items } = this.props;
-  //   let itemToEdit;
-  //   if (this.id && !isItemsLoading) {
-  //     itemToEdit = items.find((i) => i.id === this.id);
-  //     if (!itemToEdit) {
-  //       navigate('/');
-  //     }
-  //   } else {
-  //     itemToEdit = initialItem;
-  //   }
-  //   this.setState({ item: itemToEdit });
-  // }
+  componentDidMount() {
+    this.checkAndUpdateEditingItem();
+  }
+
+  componentDidUpdate() {
+    this.checkAndUpdateEditingItem();
+  }
+
+  checkAndUpdateEditingItem = () => {
+    const {
+      isItemsLoading, navigate, items, navigationParams: { id },
+    } = this.props;
+    if (this.id !== id || this.isItemsLoading !== isItemsLoading) {
+      this.id = id;
+      this.isItemsLoading = isItemsLoading;
+      let itemToEdit;
+      if (id && !isItemsLoading) {
+        itemToEdit = items.find((i) => i.id === this.id);
+        if (!itemToEdit) {
+          navigate('/');
+        }
+      } else {
+        itemToEdit = initialItem;
+      }
+      this.setState({ item: itemToEdit });
+    }
+  };
 
   onClose = () => {
     const { navigate } = this.props;
@@ -125,7 +139,7 @@ class EditItemForm extends React.Component {
 
 EditItemForm.propTypes = {
   isLoading: PropTypes.bool,
-  isItemsLoading: PropTypes.objectOf(PropTypes.number),
+  isItemsLoading: PropTypes.bool,
   items: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
@@ -136,6 +150,9 @@ EditItemForm.propTypes = {
   dispatchPutGoodsThunk: PropTypes.func,
   dispatchAddGoodsThunk: PropTypes.func,
   navigate: PropTypes.func,
+  navigationParams: PropTypes.shape({
+    id: PropTypes.string,
+  }),
 };
 
 const mapStateToProps = (state) => ({
@@ -150,104 +167,3 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNavigate(EditItemForm));
-
-// export const EditItemForm = () => {
-//   const navigate = useNavigate();
-//   const dispatch = useDispatch();
-
-//   const isLoading = useSelector(selectIsAddGoodsLoading);
-//   const isItemsLoading = useSelector(selectIsAllGoodsLoading);
-
-//   const { id } = useParams();
-
-//   const items = useSelector(selectAllGoods);
-//   const [item, setItem] = React.useState(initialItem);
-
-//   React.useEffect(() => {
-//     let itemToEdit;
-//     if (id && !isItemsLoading) {
-//       itemToEdit = items.find((i) => i.id === id);
-//       if (!itemToEdit) {
-//         navigate('/');
-//       }
-//     } else {
-//       itemToEdit = initialItem;
-//     }
-//     setItem(itemToEdit);
-//   }, [items, id, isItemsLoading]);
-
-//   const onClose = React.useCallback(() => {
-//     navigate('/');
-//   }, [navigate]);
-
-//   const onChangeText = React.useCallback((event) => {
-//     setItem({
-//       ...item,
-//       [event.target.name]: event.target.value,
-//     });
-//   }, [item]);
-
-//   const onSave = React.useCallback(() => {
-//     if (id) {
-//       dispatch(putGoodsThunk(item));
-//     } else {
-//       dispatch(addGoodsThunk(item));
-//       setItem(initialItem);
-//     }
-//   }, [item, dispatch]);
-
-//   if (isItemsLoading) {
-//     return (
-//       <div className="FormContainer Center">
-//         <CircularProgress />
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="FormContainer">
-//       <TextField
-//         name="title"
-//         id="filled-basic"
-//         label="Title"
-//         variant="filled"
-//         sx={styles.textfield}
-//         onChange={onChangeText}
-//         value={item.title}
-//       />
-//       <TextField
-//         name="description"
-//         id="filled-basic"
-//         label="Description"
-//         variant="filled"
-//         sx={styles.textfield}
-//         onChange={onChangeText}
-//         value={item.description}
-//       />
-//       <TextField
-//         name="weight"
-//         id="filled-basic"
-//         label="Weight"
-//         variant="filled"
-//         sx={styles.textfield}
-//         onChange={onChangeText}
-//         value={item.weight}
-//       />
-//       <TextField
-//         name="category"
-//         id="filled-basic"
-//         label="Category"
-//         variant="filled"
-//         sx={styles.textfield}
-//         onChange={onChangeText}
-//         value={item.category}
-//       />
-//       <div className="ButtonsFooter">
-//         {isLoading
-//           ? <CircularProgress />
-//           : <Button size="small" onClick={onSave}>{id ? 'Save' : 'Add'}</Button>}
-//         <Button size="small" onClick={onClose}>Close</Button>
-//       </div>
-//     </div>
-//   );
-// };
