@@ -14,6 +14,7 @@ export const AuthRequire = ({ children }) => {
     }
   }, [isUserAuthenticated]);
 
+  console.log('children: ', children);
   return isUserAuthenticated ? children : null;
 };
 

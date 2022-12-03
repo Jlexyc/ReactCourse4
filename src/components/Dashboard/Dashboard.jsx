@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import {
   Fab,
   CircularProgress,
@@ -7,7 +7,10 @@ import {
   Button,
 } from '@mui/material';
 import { Add as AddIcon, Logout as LogoutIcon } from '@mui/icons-material';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
+import { withNavigate } from '../withNavigate/withNavigate';
 
 import { fetchAllGoodsThunk, removeGoodsThunk } from '../../rdx/goods/thunks';
 import {
@@ -36,71 +39,112 @@ const styles = {
 
 const logoutButtonStyles = [styles.fabButton, styles.logoutButton];
 
-export const Dashboard = () => {
-  const items = useSelector(selectAllGoods);
-  const isLoading = useSelector(selectIsAllGoodsLoading);
-  const isAddLoading = useSelector(selectIsAddGoodsLoading);
-  const isRemoveGoodsLoading = useSelector(selectIsRemoveGoodsLoading);
-  const isModifyGoodsLoading = useSelector(selectIsModifyGoodsLoading);
-  const error = useSelector(selectAllGoodsError);
+class Dashboard extends React.Component {
+  componentDidMount() {
+    this.fetchAllGoodsThunkCallback();
+  }
 
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  fetchAllGoodsThunkCallback = () => {
+    const { dispatchFetchAllGoods } = this.props;
+    dispatchFetchAllGoods();
+  };
 
-  const fetchAllGoodsThunkCallback = React.useCallback(() => {
-    dispatch(fetchAllGoodsThunk());
-  }, [dispatch]);
-
-  React.useEffect(() => {
-    fetchAllGoodsThunkCallback();
-  }, []);
-
-  const onEditClicked = React.useCallback(() => {
+  onEditClicked = () => {
+    const { navigate } = this.props;
     navigate('/addItem');
-  }, [navigate]);
+  };
 
-  const onLogoutClicked = React.useCallback(() => {
-    dispatch(logoutUser());
-  }, [dispatch]);
+  onLogoutClicked = () => {
+    const { dispatchLogoutUser } = this.props;
+    dispatchLogoutUser();
+  };
 
-  const onItemRemoveClicked = React.useCallback((id) => {
-    dispatch(removeGoodsThunk(id));
-  }, [dispatch]);
+  onItemRemoveClicked = (id) => {
+    const { dispatchRemoveGoodsThunk } = this.props;
+    dispatchRemoveGoodsThunk(id);
+  };
 
-  const onEditItemClicked = React.useCallback((itemId) => {
+  onEditItemClicked = (itemId) => {
+    const { navigate } = this.props;
     navigate(`/editItem/${itemId}`);
-  }, [navigate]);
+  };
 
-  return (
-    <div className="DashboardContainer">
-      <div className="ContentContainer">
-        {isLoading && <div className="LoadingContainer"><CircularProgress /></div>}
-        {(!error && !isLoading)
-          ? (
-            <ItemsList
-              items={items}
-              onRemove={onItemRemoveClicked}
-              onEdit={onEditItemClicked}
-              isItemCreating={isAddLoading}
-              isRemoveGoodsLoading={isRemoveGoodsLoading}
-              isModifyGoodsLoading={isModifyGoodsLoading}
-            />
-          )
-          : null}
-        {error && (
-          <div>
-            <Typography variant="body2">{error.message}</Typography>
-            <Button size="small" onClick={fetchAllGoodsThunkCallback}>Retry</Button>
-          </div>
-        )}
-        <Outlet />
+  render() {
+    const {
+      items,
+      isLoading,
+      isAddLoading,
+      isRemoveGoodsLoading,
+      isModifyGoodsLoading,
+      error,
+    } = this.props;
+    return (
+      <div className="DashboardContainer">
+        <div className="ContentContainer">
+          {isLoading && <div className="LoadingContainer"><CircularProgress /></div>}
+          {(!error && !isLoading)
+            ? (
+              <ItemsList
+                items={items}
+                onRemove={this.onItemRemoveClicked}
+                onEdit={this.onEditItemClicked}
+                isItemCreating={isAddLoading}
+                isRemoveGoodsLoading={isRemoveGoodsLoading}
+                isModifyGoodsLoading={isModifyGoodsLoading}
+              />
+            )
+            : null}
+          {error && (
+            <div>
+              <Typography variant="body2">{error.message}</Typography>
+              <Button size="small" onClick={this.fetchAllGoodsThunkCallback}>Retry</Button>
+            </div>
+          )}
+          <Outlet />
+        </div>
+        <Fab color="primary" aria-label="add" sx={styles.fabButton} onClick={this.onEditClicked}>
+          <AddIcon />
+        </Fab>
+        <Fab color="primary" aria-label="add" sx={logoutButtonStyles} onClick={this.onLogoutClicked}>
+          <LogoutIcon />
+        </Fab>
       </div>
-      <Fab color="primary" aria-label="add" sx={styles.fabButton} onClick={onEditClicked}>
-        <AddIcon />
-      </Fab>
-      <Fab color="primary" aria-label="add" sx={logoutButtonStyles} onClick={onLogoutClicked}>
-        <LogoutIcon />
-      </Fab>
-    </div>
-  );
+    );
+  }
+}
+
+Dashboard.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    weight: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    description: PropTypes.string,
+  })),
+  isLoading: PropTypes.bool,
+  isAddLoading: PropTypes.bool,
+  isRemoveGoodsLoading: PropTypes.objectOf(PropTypes.number),
+  isModifyGoodsLoading: PropTypes.objectOf(PropTypes.number),
+  error: PropTypes.string,
+  dispatchFetchAllGoods: PropTypes.func,
+  dispatchLogoutUser: PropTypes.func,
+  dispatchRemoveGoodsThunk: PropTypes.func,
+  navigate: PropTypes.func,
 };
+
+const mapStateToProps = (state) => ({
+  items: selectAllGoods(state),
+  isLoading: selectIsAllGoodsLoading(state),
+  isAddLoading: selectIsAddGoodsLoading(state),
+  isRemoveGoodsLoading: selectIsRemoveGoodsLoading(state),
+  isModifyGoodsLoading: selectIsModifyGoodsLoading(state),
+  error: selectAllGoodsError(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  dispatchFetchAllGoods: () => dispatch(fetchAllGoodsThunk()),
+  dispatchLogoutUser: () => dispatch(logoutUser()),
+  dispatchRemoveGoodsThunk: (id) => dispatch(removeGoodsThunk(id)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigate(Dashboard));

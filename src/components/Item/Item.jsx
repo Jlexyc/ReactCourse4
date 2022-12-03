@@ -24,53 +24,51 @@ const styles = {
     mb: 1.5,
   },
 };
-export const Item = (
-  {
-    item,
-    onRemove,
-    onEdit,
-    isLoadingCell,
-    isLoading,
-  },
-) => {
-  const onRemoveClicked = React.useCallback(() => {
-    onRemove(item.id);
-  });
 
-  const onEditClicked = React.useCallback(() => {
+export class Item extends React.Component {
+  onEditClicked = () => {
+    const { onEdit, item } = this.props;
     onEdit(item.id);
-  });
+  };
 
-  if (isLoadingCell || isLoading) {
+  onRemoveClicked = () => {
+    const { onRemove, item } = this.props;
+    onRemove(item.id);
+  };
+
+  render() {
+    const { isLoadingCell, isLoading, item } = this.props;
+    if (isLoadingCell || isLoading) {
+      return (
+        <Card sx={[styles.cardContainer, styles.cardContainerCenter]}>
+          <CircularProgress />
+        </Card>
+      );
+    }
     return (
-      <Card sx={[styles.cardContainer, styles.cardContainerCenter]}>
-        <CircularProgress />
+      <Card sx={styles.cardContainer}>
+        <CardContent>
+          <Typography sx={styles.fontSize} color="text.secondary" gutterBottom>
+            {item.category}
+          </Typography>
+          <Typography variant="h5" component="div">
+            {item.title}
+          </Typography>
+          <Typography sx={styles.descriptionText} color="text.secondary">
+            {item.description}
+          </Typography>
+          <Typography variant="body2">
+            {item.weight}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size="small" onClick={this.onEditClicked}>Edit</Button>
+          <Button size="small" onClick={this.onRemoveClicked}>Remove</Button>
+        </CardActions>
       </Card>
     );
   }
-  return (
-    <Card sx={styles.cardContainer}>
-      <CardContent>
-        <Typography sx={styles.fontSize} color="text.secondary" gutterBottom>
-          {item.category}
-        </Typography>
-        <Typography variant="h5" component="div">
-          {item.title}
-        </Typography>
-        <Typography sx={styles.descriptionText} color="text.secondary">
-          {item.description}
-        </Typography>
-        <Typography variant="body2">
-          {item.weight}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small" onClick={onEditClicked}>Edit</Button>
-        <Button size="small" onClick={onRemoveClicked}>Remove</Button>
-      </CardActions>
-    </Card>
-  );
-};
+}
 
 Item.propTypes = {
   item: PropTypes.shape({

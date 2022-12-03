@@ -21,5 +21,7 @@ module.exports = {
     'import/prefer-default-export': ['off'],
     'react/require-default-props': ['off'],
     'default-param-last': ['off'],
+    'react/prefer-stateless-function': ['off'],
+    'react/jsx-props-no-spreading': ['off'],
   },
 };
