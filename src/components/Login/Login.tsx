@@ -2,7 +2,7 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../../rdx/user/actions';
+import { loginUserAction } from '../../rdx/user/actions';
 
 const styles = {
   container: {
@@ -11,7 +11,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     height: '100vh',
-  },
+  } as const,
   textfield: {
     pb: '10px',
   },
@@ -25,7 +25,7 @@ export const Login = () => {
     password: '',
   });
 
-  const onUserChanged = React.useCallback((event) => {
+  const onUserChanged = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setUser({
       ...user,
       [event.target.name]: event.target.value,
@@ -33,7 +33,7 @@ export const Login = () => {
   }, [user]);
 
   const loginUserCallback = React.useCallback(() => {
-    dispatch(loginUser(user));
+    dispatch(loginUserAction(user));
     navigate('/');
   }, [user]);
 

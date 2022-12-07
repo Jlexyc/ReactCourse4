@@ -1,14 +1,30 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
-  Card, CardActions, CardContent, Button, Typography, CircularProgress,
+  Card, CardActions, CardContent, Button, Typography, CircularProgress, SxProps,
 } from '@mui/material';
 
-const styles = {
+import { ItemModel } from '../../services/goodsStoreTypes';
+
+interface ItemProps {
+  item?: ItemModel;
+  onRemove?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  isLoadingCell?: boolean;
+  isLoading?: boolean;
+}
+
+interface ItemStyles {
+  cardContainer: React.CSSProperties;
+  cardContainerCenter: React.CSSProperties;
+  categoryText: React.CSSProperties;
+  descriptionText: SxProps;
+}
+
+const styles: ItemStyles = {
   cardContainer: {
     width: 250,
     height: 220,
-    m: '10px',
+    margin: '10px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -24,6 +40,7 @@ const styles = {
     mb: 1.5,
   },
 };
+
 export const Item = (
   {
     item,
@@ -31,15 +48,19 @@ export const Item = (
     onEdit,
     isLoadingCell,
     isLoading,
-  },
+  }: ItemProps,
 ) => {
   const onRemoveClicked = React.useCallback(() => {
-    onRemove(item.id);
-  });
+    if (onRemove && item) {
+      onRemove(item?.id);
+    }
+  }, [onRemove, item?.id]);
 
   const onEditClicked = React.useCallback(() => {
-    onEdit(item.id);
-  });
+    if (onEdit && item) {
+      onEdit(item?.id);
+    }
+  }, [onEdit, item?.id]);
 
   if (isLoadingCell || isLoading) {
     return (
@@ -51,17 +72,17 @@ export const Item = (
   return (
     <Card sx={styles.cardContainer}>
       <CardContent>
-        <Typography sx={styles.fontSize} color="text.secondary" gutterBottom>
-          {item.category}
+        <Typography sx={styles.categoryText} color="text.secondary" gutterBottom>
+          {item?.category}
         </Typography>
         <Typography variant="h5" component="div">
-          {item.title}
+          {item?.title}
         </Typography>
         <Typography sx={styles.descriptionText} color="text.secondary">
-          {item.description}
+          {item?.description}
         </Typography>
         <Typography variant="body2">
-          {item.weight}
+          {item?.weight}
         </Typography>
       </CardContent>
       <CardActions>
@@ -70,18 +91,4 @@ export const Item = (
       </CardActions>
     </Card>
   );
-};
-
-Item.propTypes = {
-  item: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    weight: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    description: PropTypes.string,
-  }),
-  onRemove: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired,
-  isLoadingCell: PropTypes.bool,
-  isLoading: PropTypes.bool,
 };

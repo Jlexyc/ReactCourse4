@@ -6,6 +6,7 @@ import { addGoodsThunk, putGoodsThunk } from '../../rdx/goods/thunks';
 import { selectIsAddGoodsLoading, selectAllGoods, selectIsAllGoodsLoading } from '../../rdx/goods/selectors';
 
 import './EditItemForm.css';
+import { ItemModel } from '../../services/goodsStoreTypes';
 
 const styles = {
   textfield: {
@@ -13,7 +14,9 @@ const styles = {
   },
 };
 
-const initialItem = {
+type ItemModelEdit = Omit<ItemModel, 'id'> & { id?: string };
+
+const initialItem: ItemModelEdit = {
   title: '',
   description: '',
   weight: '',
@@ -30,14 +33,15 @@ export const EditItemForm = () => {
   const { id } = useParams();
 
   const items = useSelector(selectAllGoods);
-  const [item, setItem] = React.useState(initialItem);
+  const [item, setItem] = React.useState<ItemModelEdit>(initialItem);
 
   React.useEffect(() => {
-    let itemToEdit;
+    let itemToEdit: ItemModelEdit | undefined;
     if (id && !isItemsLoading) {
       itemToEdit = items.find((i) => i.id === id);
       if (!itemToEdit) {
         navigate('/');
+        return;
       }
     } else {
       itemToEdit = initialItem;
@@ -49,7 +53,7 @@ export const EditItemForm = () => {
     navigate('/');
   }, [navigate]);
 
-  const onChangeText = React.useCallback((event) => {
+  const onChangeText = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setItem({
       ...item,
       [event.target.name]: event.target.value,
@@ -58,7 +62,7 @@ export const EditItemForm = () => {
 
   const onSave = React.useCallback(() => {
     if (id) {
-      dispatch(putGoodsThunk(item));
+      dispatch(putGoodsThunk({ ...item, id }));
     } else {
       dispatch(addGoodsThunk(item));
       setItem(initialItem);

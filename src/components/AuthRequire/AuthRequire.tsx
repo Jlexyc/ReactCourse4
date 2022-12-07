@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { selectIsUserAuthenticated } from '../../rdx/user/selectors';
 
-export const AuthRequire = ({ children }) => {
+interface AuthRequireProps {
+  children: React.ReactElement,
+}
+
+export const AuthRequire = ({ children }: AuthRequireProps) => {
   const isUserAuthenticated = useSelector(selectIsUserAuthenticated);
   const navigate = useNavigate();
 
@@ -15,8 +19,4 @@ export const AuthRequire = ({ children }) => {
   }, [isUserAuthenticated]);
 
   return isUserAuthenticated ? children : null;
-};
-
-AuthRequire.propTypes = {
-  children: PropTypes.element,
 };

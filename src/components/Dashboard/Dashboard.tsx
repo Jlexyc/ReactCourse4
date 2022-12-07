@@ -18,7 +18,7 @@ import {
   selectIsRemoveGoodsLoading,
   selectIsModifyGoodsLoading,
 } from '../../rdx/goods/selectors';
-import { logoutUser } from '../../rdx/user/actions';
+import { logoutUserAction } from '../../rdx/user/actions';
 import { ItemsList } from '../ItemsList/ItemsList';
 
 import './Dashboard.css';
@@ -60,14 +60,14 @@ export const Dashboard = () => {
   }, [navigate]);
 
   const onLogoutClicked = React.useCallback(() => {
-    dispatch(logoutUser());
+    dispatch(logoutUserAction());
   }, [dispatch]);
 
-  const onItemRemoveClicked = React.useCallback((id) => {
+  const onItemRemoveClicked = React.useCallback((id: string) => {
     dispatch(removeGoodsThunk(id));
   }, [dispatch]);
 
-  const onEditItemClicked = React.useCallback((itemId) => {
+  const onEditItemClicked = React.useCallback((itemId: string) => {
     navigate(`/editItem/${itemId}`);
   }, [navigate]);
 

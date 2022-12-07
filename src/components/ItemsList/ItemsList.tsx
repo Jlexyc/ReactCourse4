@@ -1,10 +1,19 @@
 import * as React from 'react';
 import { Typography } from '@mui/material';
-import PropTypes from 'prop-types';
 
 import { Item } from '../Item/Item';
 
 import './ItemsList.css';
+import { ItemModel } from '../../services/goodsStoreTypes';
+
+interface ItemsListProps {
+  items: ItemModel[];
+  onRemove: (id: string) => void;
+  onEdit: (id: string) => void;
+  isItemCreating: boolean;
+  isRemoveGoodsLoading: {[index: string]: boolean};
+  isModifyGoodsLoading: {[index: string]: boolean};
+}
 
 export const ItemsList = (
   {
@@ -14,7 +23,7 @@ export const ItemsList = (
     isItemCreating,
     isRemoveGoodsLoading,
     isModifyGoodsLoading,
-  },
+  }: ItemsListProps,
 ) => {
   if (!items?.length && !isItemCreating) {
     return (
@@ -39,19 +48,4 @@ export const ItemsList = (
       {isItemCreating && <Item isLoadingCell />}
     </div>
   );
-};
-
-ItemsList.propTypes = {
-  items: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    weight: PropTypes.string.isRequired,
-    category: PropTypes.string.isRequired,
-    description: PropTypes.string,
-  })),
-  onRemove: PropTypes.func.isRequired,
-  onEdit: PropTypes.func.isRequired,
-  isItemCreating: PropTypes.bool,
-  isRemoveGoodsLoading: PropTypes.objectOf(PropTypes.bool),
-  isModifyGoodsLoading: PropTypes.objectOf(PropTypes.bool),
 };
