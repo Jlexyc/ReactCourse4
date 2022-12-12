@@ -34,3 +34,7 @@ You need to implement:
 - Add Item
 
 Use BE app from https://github.com/Jlexyc/bff-react to run service locally
+
+# Homework #4 (Class Components)
+
+Make Homework #3 work on Class Components
