@@ -24,6 +24,7 @@ module.exports = {
     'import/prefer-default-export': ['off'],
     'react/require-default-props': ['off'],
     'default-param-last': ['off'],
+    'function-paren-newline': ['off'],
     'no-shadow': ['off'],
     'react/jsx-filename-extension': [1, {
       extensions: ['.jsx', '.tsx'],

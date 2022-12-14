@@ -1,11 +1,11 @@
 import { getType } from 'typesafe-actions';
 import { GlobalAppActions } from '../actions';
 import * as Actions from './actions';
-import { ItemModel, RequestType } from '../../services/goodsStoreTypes';
+import { ItemModel, RequestState } from '../../services/goodsStoreTypes';
 
 export interface GoodsState {
   list: ItemModel[],
-  isLoading: RequestType,
+  isLoading: RequestState,
   isAddLoading: boolean;
   addError: Error | null;
   removeError: Error | null;
@@ -17,7 +17,7 @@ export interface GoodsState {
 
 const initialState: GoodsState = {
   list: [],
-  isLoading: RequestType.Unset,
+  isLoading: RequestState.Unset,
   isAddLoading: false,
   addError: null,
   removeError: null,
@@ -34,20 +34,20 @@ export const reducer = (state = initialState, action: GlobalAppActions): GoodsSt
         ...state,
         list: action.payload.goods,
         error: null,
-        isLoading: RequestType.Success,
+        isLoading: RequestState.Success,
       };
     }
     case getType(Actions.getAllGoodsAsyncAction.request): {
       return {
         ...state,
         error: null,
-        isLoading: RequestType.Waiting,
+        isLoading: RequestState.Waiting,
       };
     }
     case getType(Actions.getAllGoodsAsyncAction.failure): {
       return {
         ...state,
-        isLoading: RequestType.Failure,
+        isLoading: RequestState.Failure,
         error: action.payload.error,
       };
     }

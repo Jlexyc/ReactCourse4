@@ -1,11 +1,11 @@
 import { ActionType } from 'typesafe-actions';
 
 import * as goodsActions from './goods/actions';
-import * as userActions from './user/actions';
+import * as imdbActions from './imdb/actions';
 
 const allActions = {
   goodsActions,
-  userActions,
+  imdbActions,
 };
 
 export type GlobalAppActions = ActionType<typeof allActions>

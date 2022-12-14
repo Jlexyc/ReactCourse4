@@ -1,106 +1,70 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useContext } from 'react';
+import { useDispatch } from 'react-redux';
 import {
-  Fab,
-  CircularProgress,
-  Typography,
+  TextField,
   Button,
+  Box,
 } from '@mui/material';
-import { Add as AddIcon, Logout as LogoutIcon } from '@mui/icons-material';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { imdbFindTitleThunk } from '../../rdx/imdb/thunks';
+import { useThemeContext } from '../../hooks/useThemeContext';
 
-import { fetchAllGoodsThunk, removeGoodsThunk } from '../../rdx/goods/thunks';
-import {
-  selectAllGoods,
-  selectIsAllGoodsLoading,
-  selectAllGoodsError,
-  selectIsAddGoodsLoading,
-  selectIsRemoveGoodsLoading,
-  selectIsModifyGoodsLoading,
-} from '../../rdx/goods/selectors';
-import { logoutUserAction } from '../../rdx/user/actions';
-import { ItemsList } from '../ItemsList/ItemsList';
-
-import './Dashboard.css';
-
-const styles = {
-  fabButton: {
-    position: 'absolute',
-    right: '50px',
-    bottom: '50px',
-  },
-  logoutButton: {
-    left: '50px',
-  },
-};
-
-const logoutButtonStyles = [styles.fabButton, styles.logoutButton];
+import { TitleList } from '../TitleList/TitleList';
 
 export const Dashboard = () => {
-  const items = useSelector(selectAllGoods);
-  const isLoading = useSelector(selectIsAllGoodsLoading);
-  const isAddLoading = useSelector(selectIsAddGoodsLoading);
-  const isRemoveGoodsLoading = useSelector(selectIsRemoveGoodsLoading);
-  const isModifyGoodsLoading = useSelector(selectIsModifyGoodsLoading);
-  const error = useSelector(selectAllGoodsError);
-
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryString = searchParams.get('q');
+  const themeContext = useThemeContext();
+  const [searchValue, setSearchValue] = React.useState<string>('');
 
-  const fetchAllGoodsThunkCallback = React.useCallback(() => {
-    dispatch(fetchAllGoodsThunk());
-  }, [dispatch]);
-
-  React.useEffect(() => {
-    fetchAllGoodsThunkCallback();
+  console.log('themeContext: ', themeContext);
+  const onTextInputChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(event.target.value);
   }, []);
 
-  const onEditClicked = React.useCallback(() => {
-    navigate('/addItem');
+  React.useEffect(() => {
+    if (queryString?.length) {
+      dispatch(imdbFindTitleThunk(queryString));
+    }
+  }, [queryString]);
+
+  const onTitleSettingsClicked = React.useCallback((id: string) => {
+    navigate(`/credits/${id}`);
   }, [navigate]);
 
-  const onLogoutClicked = React.useCallback(() => {
-    dispatch(logoutUserAction());
-  }, [dispatch]);
-
-  const onItemRemoveClicked = React.useCallback((id: string) => {
-    dispatch(removeGoodsThunk(id));
-  }, [dispatch]);
-
-  const onEditItemClicked = React.useCallback((itemId: string) => {
-    navigate(`/editItem/${itemId}`);
-  }, [navigate]);
+  const findTitle = React.useCallback(() => {
+    setSearchParams(`q:${searchValue}`);
+    dispatch(imdbFindTitleThunk(searchValue));
+  }, [searchValue]);
 
   return (
-    <div className="DashboardContainer">
-      <div className="ContentContainer">
-        {isLoading && <div className="LoadingContainer"><CircularProgress /></div>}
-        {(!error && !isLoading)
-          ? (
-            <ItemsList
-              items={items}
-              onRemove={onItemRemoveClicked}
-              onEdit={onEditItemClicked}
-              isItemCreating={isAddLoading}
-              isRemoveGoodsLoading={isRemoveGoodsLoading}
-              isModifyGoodsLoading={isModifyGoodsLoading}
-            />
-          )
-          : null}
-        {error && (
-          <div>
-            <Typography variant="body2">{error.message}</Typography>
-            <Button size="small" onClick={fetchAllGoodsThunkCallback}>Retry</Button>
-          </div>
-        )}
-        <Outlet />
-      </div>
-      <Fab color="primary" aria-label="add" sx={styles.fabButton} onClick={onEditClicked}>
-        <AddIcon />
-      </Fab>
-      <Fab color="primary" aria-label="add" sx={logoutButtonStyles} onClick={onLogoutClicked}>
-        <LogoutIcon />
-      </Fab>
-    </div>
+    <Box>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        p: '10px',
+        width: '400px',
+        justifyContent: 'space-between',
+        backgroundColor: themeContext === 'light' ? '#FFFFFF' : '#0F0F0F',
+      }}
+      >
+        <TextField
+          id="standard-basic"
+          label="Search String"
+          variant="standard"
+          onChange={onTextInputChange}
+          sx={{
+            width: '250px',
+          }}
+        />
+        <Button onClick={findTitle} variant="contained">Search</Button>
+      </Box>
+      <br />
+      <br />
+      <TitleList onTitleSettingsClicked={onTitleSettingsClicked} />
+    </Box>
   );
 };

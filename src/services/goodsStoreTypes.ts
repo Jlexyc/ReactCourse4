@@ -13,7 +13,7 @@ export interface ItemModel {
   description: string;
 }
 
-export enum RequestType {
+export enum RequestState {
   Unset = 'Unset',
   Waiting = 'Waiting',
   Success = 'Success',

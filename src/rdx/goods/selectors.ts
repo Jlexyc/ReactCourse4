@@ -1,9 +1,9 @@
 import { GlobalAppState } from '../rootReducer';
-import { RequestType } from '../../services/goodsStoreTypes';
+import { RequestState } from '../../services/goodsStoreTypes';
 
 export const selectAllGoods = (state: GlobalAppState) => state.goods.list;
 export const selectIsAllGoodsLoading = (state: GlobalAppState) => (
-  state.goods.isLoading === RequestType.Waiting || state.goods.isLoading === RequestType.Unset
+  state.goods.isLoading === RequestState.Waiting || state.goods.isLoading === RequestState.Unset
 );
 
 export const selectAllGoodsError = (state: GlobalAppState) => state.goods.error;

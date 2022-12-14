@@ -1,30 +1,47 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { Switch, FormControlLabel } from '@mui/material';
+
 import { PersistGate } from 'redux-persist/integration/react';
-
-import { AuthRequire } from './components/AuthRequire/AuthRequire';
 import { Dashboard } from './components/Dashboard/Dashboard';
-import { EditItemForm } from './components/EditItemForm/EditItemForm';
-import { Login } from './components/Login/Login';
-
+import { TitleActors } from './components/TitleActors/TitleActors';
 import { store, persistor } from './rdx';
+
 import './App.css';
 
-const App = () => (
-  <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<AuthRequire><Dashboard /></AuthRequire>}>
-            <Route path="/addItem" element={<EditItemForm />} />
-            <Route path="/editItem/:id" element={<EditItemForm />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-        </Routes>
-      </BrowserRouter>
-    </PersistGate>
-  </Provider>
-);
+const defaultTheme = 'light';
+export const ThemeContext = React.createContext(defaultTheme);
+
+const App = () => {
+  const [theme, setTheme] = React.useState(defaultTheme);
+
+  const onThemeChanged = React.useCallback(
+    (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+      if (checked) {
+        setTheme('dark');
+      } else {
+        setTheme('light');
+      }
+    }, []);
+
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <div className="themeControl">
+          <FormControlLabel control={<Switch checked={theme === 'dark'} onChange={onThemeChanged} />} label="Dark Mode" />
+        </div>
+        <ThemeContext.Provider value={theme}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/credits/:id" element={<TitleActors />} />
+            </Routes>
+          </BrowserRouter>
+        </ThemeContext.Provider>
+      </PersistGate>
+    </Provider>
+  );
+};
 
 export default App;

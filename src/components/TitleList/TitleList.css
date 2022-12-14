@@ -1,0 +1,13 @@
+.titleList {
+  display: flex;
+  flex-direction: 'row';
+  flex-wrap: wrap;
+}
+
+.titleLoading {
+  width: 100%;
+  height: '400';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

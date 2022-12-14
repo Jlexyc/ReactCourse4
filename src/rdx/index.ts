@@ -10,15 +10,8 @@ import type {} from 'redux-thunk/extend-redux';
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['user'],
+  whitelist: ['imdb'],
 };
-
-// const logger = (store: Store<GlobalAppState>) => (next:) => (action) => {
-//   console.log('dispatching', action);
-//   const result = next(action);
-//   console.log('next state', store.getState());
-//   return result;
-// };
 
 const persistedReducer = persistReducer<GlobalAppState>(
   persistConfig,

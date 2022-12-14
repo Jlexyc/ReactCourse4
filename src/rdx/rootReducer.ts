@@ -1,13 +1,13 @@
 import { combineReducers } from 'redux';
-import { reducer as userReducer, UserState } from './user/reducer';
 import { reducer as goodsReducer, GoodsState } from './goods/reducer';
+import { reducer as imdbReducer, IMDBState } from './imdb/reducer';
 
 export interface GlobalAppState {
-  user: UserState,
   goods: GoodsState,
+  imdb: IMDBState,
 }
 
 export const rootReducer = combineReducers<GlobalAppState>({
-  user: userReducer,
   goods: goodsReducer,
+  imdb: imdbReducer,
 });

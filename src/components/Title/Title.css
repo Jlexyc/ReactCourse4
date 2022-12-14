@@ -1,0 +1,22 @@
+.TitleContainer {
+  display: flex;
+  flex-direction: 'row';
+  padding: 20px;
+}
+
+.TitleTitle {
+
+}
+
+.TitleType {
+
+}
+
+.TitleYear {
+
+}
+
+.TitleImage {
+  height: 200px;
+  resize: horizontal;
+}

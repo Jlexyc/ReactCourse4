@@ -1,0 +1,7 @@
+.castLoading {
+  width: 100%;
+  height: '400';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
